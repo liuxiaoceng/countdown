@@ -1,12 +1,17 @@
 var WINDOW_WIDTH = 1024;
 var WINDOW_HEIGHT = 768;		
-var RADIS = 8;
+var RADIUS = 8;
 var MARGIN_TOP = 60;
 var MARGIN_LEFT = 30;
 
 // 设置截止时间
 const endTime = new Date(2016, 2-1, 26, 13, 36, 42); 
 var curShowTimeSeconds = 0; // 当前时间拒截止时间的 seconds
+
+// 小球数组
+var balls = [];
+// 颜色数组 - 随机此颜色来设置小球
+const colors = ["#33B5E5","#0099CC","#AA66CC","#9933CC","#99CC00","#669900","#FFBB33","#FF8800","#FF4444","#CC0000"];
 
 window.onload = function() {
 	var canvas = document.getElementById("canvas");
@@ -18,9 +23,9 @@ window.onload = function() {
 		
 		curShowTimeSeconds = getCurrentShowtimeSeconds();
 		setInterval(function(){
-			update();
 			render(context);
-		}, 1000);
+			update();
+		}, 50);
 		
 		
 	} else {
@@ -35,6 +40,7 @@ window.onload = function() {
 		return ret >=0? ret: 0;
 	}
 
+	// 渲染整个界面
 	function render(cxt) {
 		// clear last images
 		cxt.clearRect(0,0, WINDOW_WIDTH, WINDOW_HEIGHT);
@@ -42,7 +48,7 @@ window.onload = function() {
 		var hours = parseInt(curShowTimeSeconds/3600);
 		var minutes = parseInt(curShowTimeSeconds%3600/60);
 		var seconds = parseInt(curShowTimeSeconds%60);
-		var itemSize = RADIS+1;
+		var itemSize = RADIUS+1;
 
 		var num = 0;
 		renderDigit( MARGIN_LEFT + num*itemSize, MARGIN_TOP, parseInt(hours/10), cxt);
@@ -62,8 +68,21 @@ window.onload = function() {
 		renderDigit( MARGIN_LEFT + num*itemSize, MARGIN_TOP, parseInt(seconds/10), cxt);
 		num += 7*2+1;
 		renderDigit( MARGIN_LEFT + num*itemSize, MARGIN_TOP, parseInt(seconds%10), cxt);
-	}
 
+		/*
+			绘制小球
+		*/
+		for (var i = 0; i < balls.length; i++) {
+			cxt.fillStyle = balls[i].color;
+
+			cxt.beginPath();
+			cxt.arc(balls[i].x, balls[i].y, RADIUS, 0, 2*Math.PI, true);
+			cxt.closePath();
+
+			cxt.fill();
+		}
+	}
+	// 渲染单个数字
 	function renderDigit(x, y, num, cxt) {
 		cxt.fillStyle = "rgb(0,102,153)";
 
@@ -71,7 +90,7 @@ window.onload = function() {
 			for (var j = 0; j < digit[num][i].length; j++) {
 				if (digit[num][i][j] == 1) {
 					cxt.beginPath();
-					cxt.arc( x+j*2*(RADIS+1)+(RADIS+1), y+i*2*(RADIS+1)+(RADIS+1), RADIS, 0, 2*Math.PI );
+					cxt.arc( x+j*2*(RADIUS+1)+(RADIUS+1), y+i*2*(RADIUS+1)+(RADIUS+1), RADIUS, 0, 2*Math.PI );
 					cxt.closePath();
 
 					cxt.fill();
@@ -80,6 +99,39 @@ window.onload = function() {
 		}
 	}
 
+	// 更新球的位置，速度等信息
+	function updateBalls() {
+		for (var i = 0; i < balls.length; i++) {
+				balls[i].x += balls[i].vx;
+				balls[i].y += balls[i].vy;
+				balls[i].vy += balls[i].g;
+
+				// 下单元碰撞检测
+				if (balls[i].y >= (WINDOW_HEIGHT - RADIUS)) {
+					balls[i].y = WINDOW_HEIGHT - RADIUS;	// 着地
+					balls[i].vy = -balls[i].vy*0.75;	// 增加摩擦系数，速度逐渐降低
+				}
+		}
+	}
+	// 为对应的数字添加相应数量的球
+	function addBalls(x, y, num) {
+		for (var i = 0; i < digit[num].length; i++) {
+			for (var j = 0; j < digit[num][i].length; j++) {
+				if (digit[num][i][j] == 1) {
+					var aBall = {
+						x: x+j*2*(RADIUS+1)+(RADIUS+1),
+						y: y+i*2*(RADIUS+1)+(RADIUS+1),
+						g: 1.5+Math.random(),
+						vx: Math.pow(-1, Math.ceil(Math.random()*1000))*4,
+						vy: -5,
+						color: colors[Math.floor(Math.random()*colors.length)]
+					}
+					balls.push(aBall);
+				} // end if
+			} // enf for
+		} // end for
+	}
+	// 更新时间和球的信息
 	function update() {
 		var nextShowTimeSeconds = getCurrentShowtimeSeconds();
 		var nextHours = parseInt(nextShowTimeSeconds/3600);
@@ -91,9 +143,36 @@ window.onload = function() {
 		var curSeconds = parseInt(curShowTimeSeconds%60);	
 
 		if (nextSeconds != curSeconds) {
+			
+			if ( parseInt(curHours/10) != parseInt(nextHours/10) ) {
+				addBalls( MARGIN_LEFT + 0, MARGIN_TOP, parseInt(curHours/10));
+			}
+
+			if ( parseInt(curHours%10) != parseInt(nextHours%10) ) {
+				addBalls( MARGIN_LEFT + 15*(RADIUS+1), MARGIN_TOP, parseInt(curHours%10));
+			}
+
+			if ( parseInt(curMinutes/10) != parseInt(nextMinutes/10) ) {
+				addBalls( MARGIN_LEFT + 39*(RADIUS+1), MARGIN_TOP, parseInt(curMinutes/10));
+			}
+
+			if ( parseInt(curMinutes%10) != parseInt(nextMinutes%10) ) {
+				addBalls( MARGIN_LEFT + 54*(RADIUS+1), MARGIN_TOP, parseInt(curMinutes%10));
+			}
+
+			if ( parseInt(curSeconds/10) != parseInt(nextSeconds/10) ) {
+				addBalls( MARGIN_LEFT + 78*(RADIUS+1), MARGIN_TOP, parseInt(curSeconds/10));
+			}									
+
+			if ( parseInt(curSeconds%10) != parseInt(nextSeconds%10) ) {
+				addBalls( MARGIN_LEFT + 93*(RADIUS+1), MARGIN_TOP, parseInt(curSeconds%10));
+			}
+
 			curShowTimeSeconds = nextShowTimeSeconds;
 		}
 
+		// 更新所有球的位置
+		updateBalls();
 	}
 }
 		
