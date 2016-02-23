@@ -15,9 +15,14 @@ window.onload = function() {
 	if (context) {
 		canvas.width = WINDOW_WIDTH;
 		canvas.height = WINDOW_HEIGHT;
-
+		
 		curShowTimeSeconds = getCurrentShowtimeSeconds();
-		render(context);
+		setInterval(function(){
+			update();
+			render(context);
+		}, 1000);
+		
+		
 	} else {
 			alert("当前浏览器不支持canvas, 请更换浏览器再试")
 	}
@@ -31,6 +36,9 @@ window.onload = function() {
 	}
 
 	function render(cxt) {
+		// clear last images
+		cxt.clearRect(0,0, WINDOW_WIDTH, WINDOW_HEIGHT);
+
 		var hours = parseInt(curShowTimeSeconds/3600);
 		var minutes = parseInt(curShowTimeSeconds%3600/60);
 		var seconds = parseInt(curShowTimeSeconds%60);
@@ -70,6 +78,22 @@ window.onload = function() {
 				}
 			}
 		}
+	}
+
+	function update() {
+		var nextShowTimeSeconds = getCurrentShowtimeSeconds();
+		var nextHours = parseInt(nextShowTimeSeconds/3600);
+		var nextMinutes = parseInt(nextShowTimeSeconds%3600/60);
+		var nextSeconds = parseInt(nextShowTimeSeconds%60);	
+
+		var curHours = parseInt(curShowTimeSeconds/3600);
+		var curMinutes = parseInt(curShowTimeSeconds%3600/60);
+		var curSeconds = parseInt(curShowTimeSeconds%60);	
+
+		if (nextSeconds != curSeconds) {
+			curShowTimeSeconds = nextShowTimeSeconds;
+		}
+
 	}
 }
 		
