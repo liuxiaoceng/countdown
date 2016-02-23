@@ -39,6 +39,13 @@
 				ball.x += ball.vx;
 				ball.y += ball.vy;
 				ball.vy += ball.g;
+
+				// 下单元碰撞检测
+				if (ball.y >= (768 - ball.r)) {
+					ball.y = 768 - ball.r;	// 着地
+					ball.vy = -ball.vy;
+				}
+
 			}
 		}
 	</script>
