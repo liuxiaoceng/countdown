@@ -112,6 +112,17 @@ window.onload = function() {
 					balls[i].vy = -balls[i].vy*0.75;	// 增加摩擦系数，速度逐渐降低
 				}
 		}
+
+		var cnt = 0;
+		for (var i = 0; i < balls.length; i++) {
+			if (balls[i].x+RADIUS > 0 && balls[i].x-RADIUS < WINDOW_WIDTH) 
+				balls[cnt++] = balls[i];
+		}
+
+		while(balls.length > cnt) {
+			balls.pop();
+		}
+		
 	}
 	// 为对应的数字添加相应数量的球
 	function addBalls(x, y, num) {
