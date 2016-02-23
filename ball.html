@@ -11,7 +11,7 @@
 	</canvas>
 
 	<script type="text/javascript">
-		var ball = { x: 512, y:100, r:20, g: 2, vx: -4, vy: -10, color: "#005588"};
+		var ball = { x: 512, y:100, r:20, g: 2, vx: -4, vy: -10, f: 0.6, color: "#005588"};
 		window.onload = function() {
 			var canvas = document.getElementById("canvas");
 
@@ -43,7 +43,7 @@
 				// 下单元碰撞检测
 				if (ball.y >= (768 - ball.r)) {
 					ball.y = 768 - ball.r;	// 着地
-					ball.vy = -ball.vy;
+					ball.vy = -ball.vy*ball.f;	// 增加摩擦系数，速度逐渐降低
 				}
 
 			}
