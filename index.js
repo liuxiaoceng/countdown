@@ -6,7 +6,7 @@ var RADIUS =  Math.round(WINDOW_WIDTH*4/5/108)-1;	// 数字内容占 4/5
 
 // 设置截止时间
 const timeStop = {
-	hours: 0,	// <=99
+	hours: 1,	// <=99
 	miniutes: 0, // <=59
 	seconds: 10 // <=59
 };
