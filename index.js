@@ -1,11 +1,18 @@
 var WINDOW_WIDTH = document.body.clientWidth;
-var WINDOW_HEIGHT = document.body.clientHeight;
+var WINDOW_HEIGHT = document.body.clientHeight-10;
 var MARGIN_LEFT = Math.round(WINDOW_WIDTH/10);	// 两边占 1/5
 var MARGIN_TOP = Math.round(WINDOW_HEIGHT/5);	
 var RADIUS =  Math.round(WINDOW_WIDTH*4/5/108)-1;	// 数字内容占 4/5
 
 // 设置截止时间
-const endTime = new Date(2016, 2-1, 26, 13, 36, 42); 
+const timeStop = {
+	hours: 0,	// <=99
+	miniutes: 0, // <=59
+	seconds: 10 // <=59
+};
+var endTime = new Date(); 
+endTime.setTime(endTime.getTime()+timeStop.hours*3600*1000+timeStop.miniutes*60*1000+timeStop.seconds*1000);
+
 var curShowTimeSeconds = 0; // 当前时间拒截止时间的 seconds
 
 // 小球数组
