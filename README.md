@@ -12,6 +12,7 @@
 3. 小球弹跳  
 
 看起来很酷炫 ...  
+![countdown - 截图](images/countdown.gif)
 
 ## 使用  
 
